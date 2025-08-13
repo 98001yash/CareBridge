@@ -6,6 +6,7 @@ import com.company.CareBridge.dtos.DonationResponseDto;
 import com.company.CareBridge.dtos.DonationStatusUpdateDto;
 import com.company.CareBridge.entity.Donation;
 import com.company.CareBridge.entity.User;
+import com.company.CareBridge.enums.DonationStatus;
 import com.company.CareBridge.exceptions.ResourceNotFoundException;
 import com.company.CareBridge.repository.DonationRepository;
 import com.company.CareBridge.repository.UserRepository;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,26 +32,31 @@ public class DonationService {
 
 
     @Transactional
-    public DonationResponseDto createDonation(Long donorId, DonationRequestDto donationRequestDto){
-        log.info("Creating donation by donorId: {}",donorId);
+    public DonationResponseDto createDonation(Long donorId, DonationRequestDto donationRequestDto) {
+        log.info("Creating donation by donorId: {}", donorId);
 
         User donor = userRepository.findById(donorId)
-                .orElseThrow(()->new ResourceNotFoundException("Donor not found with id: "+donorId));
+                .orElseThrow(() -> new ResourceNotFoundException("Donor not found with id: " + donorId));
 
         User ngo = null;
-        if(donationRequestDto.getNgoId()!=null){
+        if (donationRequestDto.getNgoId() != null) {
             ngo = userRepository.findById(donationRequestDto.getNgoId())
-                    .orElseThrow(()->new ResourceNotFoundException("NGO not found with id: "+donationRequestDto.getNgoId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("NGO not found with id: " + donationRequestDto.getNgoId()));
         }
 
+        // Map but skip ID and relationships
         Donation donation = modelMapper.map(donationRequestDto, Donation.class);
+        donation.setId(null); // ensure Hibernate treats this as new
         donation.setDonor(donor);
         donation.setNgo(ngo);
+        donation.setStatus(DonationStatus.PENDING); // default for new donation
+        donation.setCreatedAt(LocalDateTime.now());
 
         Donation saved = donationRepository.save(donation);
-        log.info("Donation created with id: {} ",saved.getId());
+        log.info("Donation created with id: {}", saved.getId());
         return mapToResponseDto(saved);
     }
+
 
     @Transactional(readOnly = true)
     public List<DonationResponseDto> getDonorDonations(Long donorId){
