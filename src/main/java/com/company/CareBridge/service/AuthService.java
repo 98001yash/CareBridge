@@ -93,4 +93,33 @@ public class AuthService {
         User user = userRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("User not found with id: "+userId));
         return jwtService.generateAccessToken(user);
     }
+
+    @Transactional
+    public UserDto createUserWithRole(SignUpDto signUpDto){
+        if(userRepository.findByEmail(signUpDto.getEmail()).isPresent()){
+            throw new RuntimeConflictException("User already exists with email: "+signUpDto.getEmail());
+        }
+
+        User mappedUser = modelMapper.map(signUpDto, User.class);
+
+        // Get role from Request (ADMIN or NGO)
+        if(signUpDto.getRole()==null){
+            throw new RuntimeException("Role is required for admin creation");
+        }
+
+        Role role = roleRepository.findByName(signUpDto.getRole().toUpperCase())
+                .orElseThrow(()->new RuntimeException("Role not found"));
+
+        mappedUser.setRoles(Set.of(role));
+        mappedUser.setPassword(passwordEncoder.encode(mappedUser.getPassword()));
+
+        User savedUser = userRepository.save(mappedUser);
+
+        UserDto userDto = modelMapper.map(savedUser, UserDto.class);
+        userDto.setRoles(savedUser.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet()));
+
+        return userDto;
+    }
 }
