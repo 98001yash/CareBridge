@@ -50,27 +50,40 @@ public class AuthService {
 
 
     @Transactional
-    public UserDto signup(SignUpDto signUpDto){
-        if(userRepository.findByEmail(signUpDto.getEmail()).isPresent()){
+    public UserDto signup(SignUpDto signUpDto) {
+        // Check if user with email already exists
+        if (userRepository.findByEmail(signUpDto.getEmail()).isPresent()) {
             throw new RuntimeConflictException("User already exists with email: " + signUpDto.getEmail());
         }
 
+        // Map SignUpDto to User entity
         User mappedUser = modelMapper.map(signUpDto, User.class);
 
+        // Fetch DONOR role entity
         Role donorRole = roleRepository.findByName("DONOR")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
 
+        // Assign the DONOR role
         mappedUser.setRoles(Set.of(donorRole));
+
+        // Encode the password before saving
         mappedUser.setPassword(passwordEncoder.encode(mappedUser.getPassword()));
+
+        // Save user entity
         User savedUser = userRepository.save(mappedUser);
 
+        // Map saved User entity to UserDto
         UserDto userDto = modelMapper.map(savedUser, UserDto.class);
-        userDto.setRoles(savedUser.getRoles().stream()
-                .map(Role::getName)
+
+        // Override roles in DTO with role names (Set<String>)
+        userDto.setRoles(savedUser.getRoles()
+                .stream()
+                .map(Role::getName)  // get role name as String
                 .collect(Collectors.toSet()));
 
         return userDto;
     }
+
 
 
 
