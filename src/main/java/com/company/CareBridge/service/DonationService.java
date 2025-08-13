@@ -8,7 +8,7 @@ import com.company.CareBridge.entity.User;
 import com.company.CareBridge.exceptions.ResourceNotFoundException;
 import com.company.CareBridge.repository.DonationRepository;
 import com.company.CareBridge.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -50,6 +50,7 @@ public class DonationService {
         return mapToResponseDto(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<DonationResponseDto> getDonorDonations(Long donorId){
         log.info("Fetching donations for donorId: {}",donorId);
 
@@ -62,6 +63,18 @@ public class DonationService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<DonationResponseDto> getNgoDonations(Long ngoId){
+        log.info("Fetching donation for ngoId: {}",ngoId);
+
+        User ngo = userRepository.findById(ngoId)
+                .orElseThrow(()->new ResourceNotFoundException("NGO not found with id: "+ngoId));
+
+        return donationRepository.findByNgo(ngo)
+                .stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
+    }
 
 
     private DonationResponseDto mapToResponseDto(Donation donation) {
