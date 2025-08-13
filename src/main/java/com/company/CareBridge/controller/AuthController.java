@@ -6,6 +6,7 @@ import com.company.CareBridge.dtos.LoginResponseDto;
 import com.company.CareBridge.dtos.SignUpDto;
 import com.company.CareBridge.dtos.UserDto;
 import com.company.CareBridge.service.AuthService;
+import com.company.CareBridge.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,4 +56,6 @@ public class AuthController {
         String accessToken = authService.refreshToken(refreshToken);
         return ResponseEntity.ok(new LoginResponseDto(accessToken));
     }
+
+
 }
