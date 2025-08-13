@@ -3,6 +3,7 @@ package com.company.CareBridge.service;
 
 import com.company.CareBridge.dtos.DonationRequestDto;
 import com.company.CareBridge.dtos.DonationResponseDto;
+import com.company.CareBridge.dtos.DonationStatusUpdateDto;
 import com.company.CareBridge.entity.Donation;
 import com.company.CareBridge.entity.User;
 import com.company.CareBridge.exceptions.ResourceNotFoundException;
@@ -74,6 +75,19 @@ public class DonationService {
                 .stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    public DonationResponseDto updateDonationStatus(Long donationId, DonationStatusUpdateDto statusUpdateDto){
+        log.info("Updating donationId {} status to  {}",donationId, statusUpdateDto.getStatus());
+
+        Donation donation = donationRepository.findById(donationId)
+                .orElseThrow(()->new ResourceNotFoundException("Donation not found with id: "+donationId));
+
+        donation.setStatus(statusUpdateDto.getStatus());
+        Donation updated = donationRepository.save(donation);
+
+        log.info("DonationId {} status updated successfully",donationId);
+        return mapToResponseDto(updated);
     }
 
 
