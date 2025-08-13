@@ -1,6 +1,7 @@
 package com.company.CareBridge.entity;
 
 
+
 import com.company.CareBridge.enums.DonationStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -61,7 +62,4 @@ public class Donation {
         updatedAt = LocalDateTime.now();
     }
 
-    public enum DonationStatus {
-        PENDING, APPROVED, COMPLETED, REJECTED
-    }
 }
