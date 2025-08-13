@@ -14,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -45,6 +48,18 @@ public class DonationService {
         Donation saved = donationRepository.save(donation);
         log.info("Donation created with id: {} ",saved.getId());
         return mapToResponseDto(saved);
+    }
+
+    public List<DonationResponseDto> getDonorDonations(Long donorId){
+        log.info("Fetching donations for donorId: {}",donorId);
+
+        User donor = userRepository.findById(donorId)
+                .orElseThrow(()->new ResourceNotFoundException("Donor not found with id: "+donorId));
+
+        return donationRepository.findByDonor(donor)
+                .stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
     }
 
 
