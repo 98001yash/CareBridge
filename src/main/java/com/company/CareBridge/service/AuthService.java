@@ -94,6 +94,10 @@ public class AuthService {
         return jwtService.generateAccessToken(user);
     }
 
+
+
+    //  create a new User LIKE ADMIN, NGO
+    // ADMIN AND NGOs are only created by other ADMIN not normal user
     @Transactional
     public UserDto createUserWithRole(SignUpDto signUpDto){
         if(userRepository.findByEmail(signUpDto.getEmail()).isPresent()){
