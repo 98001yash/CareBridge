@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/ngos")
@@ -28,5 +30,31 @@ public class NgoController {
         NgoResponseDto response = ngoService.createNgo(ngoRequestDto, creatorId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+
+    @GetMapping("/{ngoId}")
+    public ResponseEntity<NgoResponseDto> getNgoById(@PathVariable Long ngoId) {
+        return ResponseEntity.ok(ngoService.getNgoById(ngoId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<NgoResponseDto>> getAllNgos() {
+        return ResponseEntity.ok(ngoService.getAllNgos());
+    }
+
+    @PutMapping("/{ngoId}")
+    public ResponseEntity<NgoResponseDto> updateNgo(
+            @PathVariable Long ngoId,
+            @RequestBody NgoRequestDto ngoRequestDto) {
+        return ResponseEntity.ok(ngoService.updateNgo(ngoId, ngoRequestDto));
+    }
+
+
+    @DeleteMapping("/{ngoId}")
+    public ResponseEntity<String> deleteNgo(@PathVariable Long ngoId) {
+        ngoService.deleteNgo(ngoId);
+        return ResponseEntity.ok("NGO deleted successfully.");
+    }
+
 
 }
