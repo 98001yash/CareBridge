@@ -16,6 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -48,5 +51,20 @@ public class DonationRequestService {
         log.info("Donation request created successfully with ID: {}",saved.getId());
 
         return modelMapper.map(saved, DonationRequestResponseDto.class);
+    }
+
+
+    public List<DonationRequestResponseDto> getAllDonationRequests(){
+        log.info("Fetching all donation requests");
+
+        return donationRequestRepository.findAll()
+                .stream()
+                .map(dr->{
+                    DonationRequestResponseDto dto = modelMapper.map(dr, DonationRequestResponseDto.class);
+                    dto.setNgoId(dr.getNgo().getId());
+                    dto.setNgoName(dr.getNgo().getName());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 }
