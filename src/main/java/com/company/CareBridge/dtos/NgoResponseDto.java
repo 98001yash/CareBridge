@@ -24,4 +24,5 @@ public class NgoResponseDto {
     private String zipCode;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    //  for the Ngo response
 }
