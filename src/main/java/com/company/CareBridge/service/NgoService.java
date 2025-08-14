@@ -68,5 +68,29 @@ public class NgoService {
     }
 
 
+    public NgoResponseDto updateNgo(Long ngoId, NgoRequestDto ngoRequestDto){
+        Ngo existingNgo = ngoRepository.findById(ngoId)
+                .orElseThrow(() -> new RuntimeException("NGO not found"));
+
+        existingNgo.setName(ngoRequestDto.getName());
+        existingNgo.setEmail(ngoRequestDto.getEmail());
+        existingNgo.setPhone(ngoRequestDto.getPhone());
+        existingNgo.setAddress(ngoRequestDto.getAddress());
+        existingNgo.setCity(ngoRequestDto.getCity());
+        existingNgo.setState(ngoRequestDto.getState());
+        existingNgo.setZipCode(ngoRequestDto.getZipCode());
+        existingNgo.setUpdatedAt(LocalDateTime.now());
+
+        Ngo updatedNgo = ngoRepository.save(existingNgo);
+        return modelMapper.map(updatedNgo, NgoResponseDto.class);
+    }
+
+
+    public void deleteNgo(Long ngoId){
+    Ngo ngo = ngoRepository.findById(ngoId)
+                .orElseThrow(()->new RuntimeException("Ngo not found"));
+
+    ngoRepository.delete(ngo);
+    }
 
 }
