@@ -51,4 +51,13 @@ public class NgoService {
 
         return modelMapper.map(savedNgo, NgoResponseDto.class);
     }
+
+    public NgoResponseDto getNgoById(Long ngoId){
+        Ngo ngo = ngoRepository.findById(ngoId)
+                .orElseThrow(()->new RuntimeException("NGO not found"));
+        return modelMapper.map(ngo, NgoResponseDto.class);
+    }
+
+
+
 }
