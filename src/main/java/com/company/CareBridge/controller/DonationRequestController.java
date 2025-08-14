@@ -8,10 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/donation-requests")
@@ -26,5 +25,11 @@ public class DonationRequestController {
         log.info("Received request to create donation request");
         DonationRequestResponseDto created = donationRequestService.createDonationRequest(requestDto);
         return ResponseEntity.ok(created);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DonationRequestResponseDto>> getAllDonationRequests(){
+        log.info("Received request to fetch all donation requests");
+        return ResponseEntity.ok(donationRequestService.getAllDonationRequests());
     }
 }
