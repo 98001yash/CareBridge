@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -56,6 +57,14 @@ public class NgoService {
         Ngo ngo = ngoRepository.findById(ngoId)
                 .orElseThrow(()->new RuntimeException("NGO not found"));
         return modelMapper.map(ngo, NgoResponseDto.class);
+    }
+
+
+    public List<NgoResponseDto> getAllNgos(){
+        List<Ngo> ngos = ngoRepository.findAll();
+        return ngos.stream()
+                .map(ngo->modelMapper.map(ngo, NgoResponseDto.class))
+                .toList();
     }
 
 
