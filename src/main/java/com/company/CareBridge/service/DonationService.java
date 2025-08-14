@@ -48,7 +48,7 @@ public class DonationService {
         Donation donation = modelMapper.map(donationRequestDto, Donation.class);
         donation.setId(null); // ensure Hibernate treats this as new
         donation.setDonor(donor);
-        donation.setNgo(ngo);
+        donation.setNgo(ngo.getNgo());
         donation.setStatus(DonationStatus.PENDING); // default for new donation
         donation.setCreatedAt(LocalDateTime.now());
 
@@ -102,7 +102,7 @@ public class DonationService {
         return DonationResponseDto.builder()
                 .id(donation.getId())
                 .donorName(donation.getDonor().getUsername())
-                .ngoName(donation.getNgo() != null ? donation.getNgo().getUsername() : null)
+                .ngoName(donation.getNgo() != null ? donation.getNgo().getName() : null)
                 .itemName(donation.getItemName())
                 .category(donation.getCategory())
                 .quantity(donation.getQuantity())

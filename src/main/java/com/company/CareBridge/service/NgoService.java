@@ -42,9 +42,9 @@ public class NgoService {
             throw new RuntimeException("Only ADMIN users can create NGOs");
         }
 
-        Ngo ngoEntity = modelMapper.map(ngoRequestDto,Ngo.class);
+        Ngo ngoEntity = modelMapper.map(ngoRequestDto, Ngo.class);
         ngoEntity.setCreatedAt(LocalDateTime.now());
-
+        ngoEntity.setUser(creator); // assign user to satisfy not-null constraint
         // save NGPs
         Ngo savedNgo = ngoRepository.save(ngoEntity);
         log.info("NGO created successfully with ID: {}",savedNgo.getId());

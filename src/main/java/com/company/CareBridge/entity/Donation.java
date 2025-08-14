@@ -7,14 +7,15 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
+@Entity
+@Table(name = "donations")
 @Getter
 @Setter
-@Entity
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "donations")
+@AllArgsConstructor
 @Builder
 public class Donation {
 
@@ -23,13 +24,12 @@ public class Donation {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "donor_id",nullable=false)
+    @JoinColumn(name = "donor_id", nullable = false)
     private User donor;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ngo_id")
-    private User ngo;
-
+    private Ngo ngo; // Must be Ngo, not User
 
     @Column(nullable = false)
     private String itemName;
@@ -51,15 +51,15 @@ public class Donation {
     private LocalDateTime updatedAt;
 
     @PrePersist
-    public void onCreate(){
+    public void onCreate() {
         createdAt = LocalDateTime.now();
-        updatedAt= createdAt;
-        status= DonationStatus.PENDING;
+        updatedAt = createdAt;
+        status = DonationStatus.PENDING;
     }
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 }
+
