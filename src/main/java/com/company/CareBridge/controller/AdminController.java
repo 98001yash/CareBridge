@@ -5,6 +5,7 @@ import com.company.CareBridge.dtos.SignUpDto;
 import com.company.CareBridge.dtos.UserDto;
 import com.company.CareBridge.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,7 @@ public class AdminController {
 
     @PostMapping("/create-user")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserDto> createUser(@RequestBody SignUpDto signUpDto){
+    public ResponseEntity<UserDto> createUser(@RequestBody SignUpDto signUpDto) throws BadRequestException {
         return ResponseEntity.ok(authService.createUserWithRole(signUpDto));
     }
 }

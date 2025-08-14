@@ -34,4 +34,9 @@ public class Ngo {
 
     @OneToMany(mappedBy = "ngo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Donation> donations;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
 }
