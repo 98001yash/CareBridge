@@ -22,6 +22,8 @@ public class DonationController {
     private final DonationService donationService;
 
 
+
+    // create donation and linked to the donationRequestId
     @PostMapping("/donor/{donorId}")
     public ResponseEntity<DonationResponseDto> createDonation(
             @PathVariable Long donorId,
