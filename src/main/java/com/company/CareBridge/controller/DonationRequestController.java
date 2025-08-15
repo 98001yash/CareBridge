@@ -21,11 +21,18 @@ public class DonationRequestController {
     private final DonationRequestService donationRequestService;
 
     @PostMapping
-    public ResponseEntity<DonationRequestResponseDto> createDonationRequest(@RequestBody DonationRequestRequestDto requestDto) throws BadRequestException {
+    public ResponseEntity<DonationRequestResponseDto> createDonationRequest(
+            @RequestBody DonationRequestRequestDto requestDto,
+            @RequestParam(required = false) Long ngoId  // Optional for ADMIN
+    ) throws BadRequestException {
         log.info("Received request to create donation request");
-        DonationRequestResponseDto created = donationRequestService.createDonationRequest(requestDto);
+
+        DonationRequestResponseDto created = donationRequestService.createDonationRequest(requestDto, ngoId);
+
+        log.info("Donation request created successfully with ID: {}", created.getId());
         return ResponseEntity.ok(created);
     }
+
 
     @GetMapping
     public ResponseEntity<List<DonationRequestResponseDto>> getAllDonationRequests(){
