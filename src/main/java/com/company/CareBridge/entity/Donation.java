@@ -47,6 +47,10 @@ public class Donation {
     @Column(nullable = false)
     private DonationStatus status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "donation_request_id")
+    private DonationRequest donationRequest;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

@@ -25,10 +25,11 @@ public class DonationController {
     @PostMapping("/donor/{donorId}")
     public ResponseEntity<DonationResponseDto> createDonation(
             @PathVariable Long donorId,
-            @RequestBody DonationRequestDto donationRequestDto
-            ){
-        log.info("Received request to create donation for donorId {}",donorId);
-        DonationResponseDto createdDonation = donationService.createDonation(donorId, donationRequestDto);
+            @RequestBody DonationRequestDto donationRequestDto,
+            @RequestParam(required = false) Long donationRequestId // optional
+    ) {
+        log.info("Received request to create donation for donorId: {} with donationRequestId: {}", donorId, donationRequestId);
+        DonationResponseDto createdDonation = donationService.createDonation(donorId, donationRequestDto, donationRequestId);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDonation);
     }
 

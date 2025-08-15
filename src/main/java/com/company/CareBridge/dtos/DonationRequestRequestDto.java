@@ -19,4 +19,7 @@ public class DonationRequestRequestDto {
 
     // Optional field: only needed when ADMIN is creating a donation request
     private Long ngoId;
+
+    private Long donationRequestId; // optional
+
 }

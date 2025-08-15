@@ -5,10 +5,14 @@ import com.company.CareBridge.dtos.DonationRequestDto;
 import com.company.CareBridge.dtos.DonationResponseDto;
 import com.company.CareBridge.dtos.DonationStatusUpdateDto;
 import com.company.CareBridge.entity.Donation;
+import com.company.CareBridge.entity.DonationRequest;
+import com.company.CareBridge.entity.Ngo;
 import com.company.CareBridge.entity.User;
 import com.company.CareBridge.enums.DonationStatus;
 import com.company.CareBridge.exceptions.ResourceNotFoundException;
 import com.company.CareBridge.repository.DonationRepository;
+import com.company.CareBridge.repository.DonationRequestRepository;
+import com.company.CareBridge.repository.NgoRepository;
 import com.company.CareBridge.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,34 +32,49 @@ public class DonationService {
     private final DonationRepository donationRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final DonationRequestRepository donationRequestRepository;
+    private final NgoRepository ngoRepository;
 
 
 
     @Transactional
-    public DonationResponseDto createDonation(Long donorId, DonationRequestDto donationRequestDto) {
+    public DonationResponseDto createDonation(Long donorId, DonationRequestDto donationRequestDto, Long donationRequestId) {
         log.info("Creating donation by donorId: {}", donorId);
 
+        // Fetch donor
         User donor = userRepository.findById(donorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Donor not found with id: " + donorId));
 
-        User ngo = null;
-        if (donationRequestDto.getNgoId() != null) {
-            ngo = userRepository.findById(donationRequestDto.getNgoId())
+        Ngo targetNgo = null;
+        DonationRequest linkedRequest = null;
+
+        // If donationRequestId is provided, fetch the request and set NGO from it
+        if (donationRequestId != null) {
+            linkedRequest = donationRequestRepository.findById(donationRequestId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Donation request not found with id: " + donationRequestId));
+            targetNgo = linkedRequest.getNgo();
+            log.info("Donation will be linked to request ID: {} and NGO: {}", donationRequestId, targetNgo.getName());
+        } else if (donationRequestDto.getNgoId() != null) {
+            // If donor chooses a specific NGO for general donation
+            targetNgo = ngoRepository.findById(donationRequestDto.getNgoId())
                     .orElseThrow(() -> new ResourceNotFoundException("NGO not found with id: " + donationRequestDto.getNgoId()));
         }
 
-        // Map but skip ID and relationships
+        // Map DTO to entity
         Donation donation = modelMapper.map(donationRequestDto, Donation.class);
-        donation.setId(null); // ensure Hibernate treats this as new
+        donation.setId(null); // ensure new entity
         donation.setDonor(donor);
-        donation.setNgo(ngo.getNgo());
-        donation.setStatus(DonationStatus.PENDING); // default for new donation
+        donation.setNgo(targetNgo);
+        donation.setDonationRequest(linkedRequest); // link to request if any
+        donation.setStatus(DonationStatus.PENDING);
         donation.setCreatedAt(LocalDateTime.now());
 
         Donation saved = donationRepository.save(donation);
-        log.info("Donation created with id: {}", saved.getId());
+        log.info("Donation created successfully with ID: {}", saved.getId());
+
         return mapToResponseDto(saved);
     }
+
 
 
     @Transactional(readOnly = true)

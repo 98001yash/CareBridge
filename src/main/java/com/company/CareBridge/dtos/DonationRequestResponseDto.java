@@ -23,4 +23,9 @@ public class DonationRequestResponseDto {
     private Long ngoId;
     private String ngoName;
     private LocalDateTime createdAt;
+
+
+    private Long donationRequestId;
+    private String donationRequestTitle;
+
 }
