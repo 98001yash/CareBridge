@@ -51,6 +51,8 @@ public class Donation {
     @JoinColumn(name = "donation_request_id")
     private DonationRequest donationRequest;
 
+    // to fetc the current donation Sttaus
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
