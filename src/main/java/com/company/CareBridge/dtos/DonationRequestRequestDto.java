@@ -22,4 +22,5 @@ public class DonationRequestRequestDto {
 
     private Long donationRequestId; // optional
 
+    // donation Request Id to fetch the donationRequest
 }
