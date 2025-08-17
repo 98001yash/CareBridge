@@ -50,6 +50,7 @@ public class NgoController {
     }
 
 
+    // to delete the Ngo
     @DeleteMapping("/{ngoId}")
     public ResponseEntity<String> deleteNgo(@PathVariable Long ngoId) {
         ngoService.deleteNgo(ngoId);
